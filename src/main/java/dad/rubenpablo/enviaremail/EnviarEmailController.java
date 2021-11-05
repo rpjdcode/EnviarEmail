@@ -137,7 +137,7 @@ public class EnviarEmailController implements Initializable{
     	email.setSSLOnConnect(model.isCheck());
     	try {
 			email.setFrom(model.getFrom());
-	    	email.setMsg("E-mail de ejemplo de Rubén Pablo");
+	    	email.setMsg(model.getMsg());
 	    	email.addTo(model.getTo());
 	    	email.send();
 	    	
