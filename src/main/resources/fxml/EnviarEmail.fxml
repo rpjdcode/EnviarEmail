@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<GridPane fx:id="view" alignment="CENTER" hgap="5.0" prefHeight="454.0" prefWidth="690.0" vgap="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+   </rowConstraints>
+   <columnConstraints>
+      <ColumnConstraints halignment="RIGHT" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints maxWidth="50.0" />
+   </columnConstraints>
+   <children>
+      <HBox fx:id="smtpHbox" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1">
+         <children>
+            <TextField fx:id="serverText" promptText="Nombre o IP del servidor" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="portText" maxWidth="60.0" promptText="Puerto" HBox.hgrow="NEVER" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" top="5.0" />
+         </padding></HBox>
+      <Label fx:id="smtpLabel" text="Servidor SMTP:" />
+      <Label fx:id="sslLabel" text="Usar conexión SSL:" GridPane.rowIndex="1" />
+      <Label fx:id="fromLabel" text="Remitente (From):" GridPane.rowIndex="2" />
+      <Label fx:id="toLabel" text="Destinatario (To):" GridPane.rowIndex="3" />
+      <Label fx:id="subjectLabel" text="Asunto(Subject):" GridPane.rowIndex="4" />
+      <CheckBox fx:id="sslCheck" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </CheckBox>
+      <HBox fx:id="fromHbox" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <TextField fx:id="fromText" promptText="Email del remitente" HBox.hgrow="ALWAYS" />
+            <PasswordField fx:id="passField" promptText="Contraseña" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" top="5.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="toHbox" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         <children>
+            <TextField fx:id="toText" promptText="Email del destinatario" HBox.hgrow="ALWAYS">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </TextField>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="subjectHbox" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+         <children>
+            <TextField fx:id="subjectText" promptText="Asunto del mensaje" HBox.hgrow="ALWAYS" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </HBox>
+      <TextArea fx:id="msgText" prefHeight="200.0" prefWidth="200.0" promptText="Mensaje" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS" />
+      <VBox fx:id="controlsVbox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowSpan="6">
+         <children>
+            <Button fx:id="sendButton" defaultButton="true" mnemonicParsing="false" onAction="#onSendAction" text="Enviar" />
+            <Button fx:id="clearButton" mnemonicParsing="false" onAction="#onClearAction" text="Vaciar" />
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#onCloseAction" text="Cerrar" />
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</GridPane>
