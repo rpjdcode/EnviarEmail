@@ -9,19 +9,18 @@ import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 
+import dad.rubenpablo.enviaremail.extra.AlertGen;
 import dad.rubenpablo.enviaremail.model.EnviarEmailModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -29,7 +28,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class EnviarEmailController implements Initializable{
-
+	
 	// Model
 	private EnviarEmailModel model = new EnviarEmailModel();
 	
@@ -98,7 +97,7 @@ public class EnviarEmailController implements Initializable{
 
     @FXML
     private GridPane view;
-
+    
     public EnviarEmailController() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EnviarEmail.fxml"));
 		loader.setController(this);
@@ -130,35 +129,35 @@ public class EnviarEmailController implements Initializable{
 
     @FXML
     void onSendAction(ActionEvent event) {
-    	Email email = new SimpleEmail();
-    	email.setHostName(model.getServer());
-    	email.setSmtpPort(Integer.parseInt(model.getPuerto()));
-    	email.setAuthenticator(new DefaultAuthenticator(model.getFrom(), model.getPass()));
-    	email.setSSLOnConnect(model.isCheck());
-    	try {
-			email.setFrom(model.getFrom());
-	    	email.setMsg(model.getMsg());
-	    	email.addTo(model.getTo());
-	    	email.send();
-	    	
-	    	Alert exito = new Alert(AlertType.INFORMATION);
-	    	Stage escenarioExito = (Stage)exito.getDialogPane().getScene().getWindow();
-	    	escenarioExito.getIcons().add(new Image(getClass().getResourceAsStream("/imgs/email-send-icon-32x32.png")));
-	    	exito.setHeaderText("Mensaje enviado con éxito a '" + model.getTo()+"'.");
-	    	exito.showAndWait();
-	    	
-	    	toText.textProperty().set("");
-	    	subjectText.textProperty().set("");
-	    	msgText.textProperty().set("");
-		} catch (EmailException e) {
-			Alert alerta = new Alert(AlertType.ERROR);
-			Stage escenarioError = (Stage)alerta.getDialogPane().getScene().getWindow();
-			escenarioError.getIcons().add(new Image(getClass().getResourceAsStream("/imgs/email-send-icon-32x32.png")));			
-			alerta.setHeaderText("No se pudo enviar el e-mail");
-			e.printStackTrace();
-			alerta.setContentText(e.getCause().toString());
-			alerta.showAndWait();
-		}
+    	if (model.getServer().equals("") || model.getPuerto().equals("")) {
+    		AlertasDefinidas.SVALERT.showAndWait();
+    	} else if (model.getFrom().equals("") || model.getPass().equals("")) {
+    		AlertasDefinidas.USRALERT.showAndWait();
+    	} else if (model.getTo().equals("")) {
+    		AlertasDefinidas.DESTALERT.showAndWait();
+    	} else {
+        	Email email = new SimpleEmail();
+        	email.setHostName(model.getServer());
+        	email.setSmtpPort(Integer.parseInt(model.getPuerto()));
+        	email.setAuthenticator(new DefaultAuthenticator(model.getFrom(), model.getPass()));
+        	email.setSSLOnConnect(model.isCheck());
+        	try {
+    			email.setFrom(model.getFrom());
+    	    	email.setMsg(model.getMsg());
+    	    	email.addTo(model.getTo());
+    	    	email.send();
+    	    	
+    	    	AlertGen exito = new AlertGen(AlertType.INFORMATION, "Mensaje enviado con éxito a '" + model.getTo()+"'.", null, AlertasDefinidas.RUTA_ICONO);
+    	    	exito.getAlert().showAndWait();
+    	    	
+    	    	toText.textProperty().set("");
+    	    	subjectText.textProperty().set("");
+    	    	msgText.textProperty().set("");
+    		} catch (EmailException e) {
+    			AlertGen error = new AlertGen(AlertType.ERROR, "No se pudo enviar el e-mail", e.getLocalizedMessage(), AlertasDefinidas.RUTA_ICONO);
+    			error.getAlert().showAndWait();
+    		}
+    	}
 
     }
     
