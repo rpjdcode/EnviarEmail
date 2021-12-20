@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javax.mail.Authenticator;
+
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -11,6 +13,7 @@ import org.apache.commons.mail.SimpleEmail;
 
 import dad.rubenpablo.enviaremail.extra.AlertGen;
 import dad.rubenpablo.enviaremail.model.EnviarEmailModel;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -107,6 +110,8 @@ public class EnviarEmailController implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		bindAll();
+		
+		sendButton.disableProperty().bind(model.sendingMailProperty());
 	}
     
     @FXML
@@ -141,18 +146,18 @@ public class EnviarEmailController implements Initializable{
         	email.setSmtpPort(Integer.parseInt(model.getPuerto()));
         	email.setAuthenticator(new DefaultAuthenticator(model.getFrom(), model.getPass()));
         	email.setSSLOnConnect(model.isCheck());
+        	
         	try {
     			email.setFrom(model.getFrom());
     	    	email.setMsg(model.getMsg());
     	    	email.addTo(model.getTo());
+    	    	email.setSubject(model.getSubject());
     	    	email.send();
     	    	
     	    	AlertGen exito = new AlertGen(AlertType.INFORMATION, "Mensaje enviado con éxito a '" + model.getTo()+"'.", null, AlertasDefinidas.RUTA_ICONO);
     	    	exito.getAlert().showAndWait();
     	    	
-    	    	toText.textProperty().set("");
-    	    	subjectText.textProperty().set("");
-    	    	msgText.textProperty().set("");
+    	    	limpiarEnvio();
     		} catch (EmailException e) {
     			AlertGen error = new AlertGen(AlertType.ERROR, "No se pudo enviar el e-mail", e.getLocalizedMessage(), AlertasDefinidas.RUTA_ICONO);
     			error.getAlert().showAndWait();
@@ -160,6 +165,12 @@ public class EnviarEmailController implements Initializable{
     	}
 
     }
+
+	private void limpiarEnvio() {
+		toText.textProperty().set("");
+		subjectText.textProperty().set("");
+		msgText.textProperty().set("");
+	}
     
     private void bindAll() {
 		model.serverProperty().bind(serverText.textProperty());
@@ -175,6 +186,49 @@ public class EnviarEmailController implements Initializable{
     public GridPane getView() {
 		return view;
 	}
+    
+    /** Método para enviar la tarea en segundo plano.**/
+    @FXML
+    void onSendBackgroundAction(ActionEvent event) {
+    	Email nuevo = new SimpleEmail();
+    	Task<Void> sendEmail = new Task<Void>() {
+
+			@Override
+			protected Void call() throws Exception {
+				nuevo.setHostName(model.getServer());
+				nuevo.setSmtpPort(Integer.parseInt(model.getPuerto()));
+				nuevo.setAuthenticator(new DefaultAuthenticator(model.getFrom(), model.getPass()));
+				nuevo.setSSLOnConnect(model.isCheck());
+				
+				// email
+				nuevo.setFrom(model.getFrom());
+				nuevo.addTo(model.getTo());
+				nuevo.setSubject(model.getSubject());
+				nuevo.setMsg(model.getMsg());
+				
+				model.setSendingMail(true);
+				nuevo.send();
+				return null;
+			}
+    	};
+    	
+    	sendEmail.setOnSucceeded(e -> {
+	    	AlertGen exito = new AlertGen(AlertType.INFORMATION, "Mensaje enviado con éxito a '" + model.getTo()+"'.", null, AlertasDefinidas.RUTA_ICONO);
+	    	exito.getAlert().showAndWait();
+	    	model.setSendingMail(false);
+	    	limpiarEnvio();
+	    	
+    	});
+    	
+    	sendEmail.setOnFailed(e -> {
+			AlertGen error = new AlertGen(AlertType.ERROR, "No se pudo enviar el e-mail", e.getSource().getException().getMessage(), AlertasDefinidas.RUTA_ICONO);
+			error.getAlert().showAndWait();
+			model.setSendingMail(false);
+    	});
+    	
+    	new Thread(sendEmail).start();
+    	
+    }
 
 
 

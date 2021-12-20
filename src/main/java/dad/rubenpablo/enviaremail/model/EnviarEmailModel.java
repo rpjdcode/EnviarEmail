@@ -15,6 +15,9 @@ public class EnviarEmailModel {
 	private StringProperty to = new SimpleStringProperty();
 	private StringProperty subject = new SimpleStringProperty();
 	private StringProperty msg = new SimpleStringProperty();
+	
+	private BooleanProperty sendingMail = new SimpleBooleanProperty();
+	
 	public final StringProperty serverProperty() {
 		return this.server;
 	}
@@ -110,6 +113,21 @@ public class EnviarEmailModel {
 	public final void setMsg(final String msg) {
 		this.msgProperty().set(msg);
 	}
+
+	public final BooleanProperty sendingMailProperty() {
+		return this.sendingMail;
+	}
+	
+
+	public final boolean isSendingMail() {
+		return this.sendingMailProperty().get();
+	}
+	
+
+	public final void setSendingMail(final boolean sendingMail) {
+		this.sendingMailProperty().set(sendingMail);
+	}
+	
 	
 	
 	
